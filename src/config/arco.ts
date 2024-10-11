@@ -122,11 +122,90 @@ export const ArcoMatchComponents = [
     componentDir: 'typography',
   },
 ];
+export const ArcoComponents = [
+  'affix',
+  'alert',
+  'anchor',
+  'auto-complete',
+  'avatar',
+  'back-top',
+  'badge',
+  'breadcrumb',
+  'button',
+  'calendar',
+  'card',
+  'carousel',
+  'cascader',
+  'checkbox',
+  'collapse',
+  'color-picker',
+  'comment',
+  'date-picker',
+  'descriptions',
+  'divider',
+  'drawer',
+  'dropdown',
+  'empty',
+  'form',
+  'grid',
+  'image',
+  'input-number',
+  'input-tag',
+  'input',
+  'layout',
+  'link',
+  'list',
+  'locale',
+  'mention',
+  'menu',
+  'message',
+  'modal',
+  'notification',
+  'overflow-list',
+  'page-header',
+  'pagination',
+  'popconfirm',
+  'popover',
+  'progress',
+  'radio',
+  'rate',
+  'resize-box',
+  'result',
+  'scrollbar',
+  'select',
+  'skeleton',
+  'slider',
+  'space',
+  'spin',
+  'split',
+  'statistic',
+  'steps',
+  'switch',
+  'table',
+  'tabs',
+  'tag',
+  'textarea',
+  'time-picker',
+  'timeline',
+  'tooltip',
+  'transfer',
+  'tree-select',
+  'tree',
+  'trigger',
+  'typography',
+  'upload',
+  'verification-code',
+  'watermark',
+];
 
-const _getArcoComponentStyleDir = (componentName: string, options: ArcoResolverOptions | true) => {
+const _getArcoComponentStyleDir = (componentName: string, options: ArcoResolverOptions | true): string | string[] => {
   const importStyle = typeof options === 'boolean' ? 'css' : options.importStyle ?? 'css';
   if (importStyle === 'less') return `@arco-design/web-vue/es/${componentName}/style/index.js`;
-  return `@arco-design/web-vue/es/${componentName}/style/css.js`;
+  if (importStyle === 'css') return `@arco-design/web-vue/es/${componentName}/style/css.js`;
+  return [
+    `@arco-design/web-vue/es/${componentName}/style/index.js`,
+    `@arco-design/web-vue/es/${componentName}/style/css.js`,
+  ];
 };
 
 /**
@@ -139,7 +218,7 @@ export function getArcoComponentStyleDir(_options: {
 }): undefined | string | string[] {
   const { importName, options } = _options || {};
   if (!importName) {
-    return ArcoMatchComponents.map(({ componentDir }) => _getArcoComponentStyleDir(componentDir, options));
+    return ArcoComponents.flatMap((componentDir) => _getArcoComponentStyleDir(componentDir, options));
   }
 
   if (['ConfigProvider', 'Icon'].includes(importName)) return undefined;
@@ -156,7 +235,7 @@ export function getArcoComponentStyleDir(_options: {
 }
 
 export const isArcoComponentStyleDir = (importSource: string, options: ArcoResolverOptions | true) => {
-  const arcoComponentDirs = ArcoMatchComponents.map((item) => item.componentDir);
-
-  return arcoComponentDirs.some((componentDir) => _getArcoComponentStyleDir(componentDir, options) === importSource);
+  return ArcoComponents.some((componentDir) =>
+    [_getArcoComponentStyleDir(componentDir, options)].flatMap((item) => item).includes(importSource),
+  );
 };

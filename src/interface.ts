@@ -14,7 +14,7 @@ export interface ArcoResolverOptions {
    *
    * @default 'css'
    */
-  importStyle?: boolean | 'css' | 'less';
+  importStyle?: boolean | 'css' | 'less' | 'all';
   /**
    * resolve icons
    *
@@ -27,6 +27,11 @@ export interface ArcoResolverOptions {
    * @default true
    */
   sideEffect?: boolean;
+  /**
+   * 如果使用了 v1 版本，会先在 transform 阶段去除掉样式文件，在 generateBundle 阶段再添加上，该配置则是在 generateBundle 使用，默认为 css
+   * @default 'css'
+   */
+  generateBundleImportStyle?: 'css' | 'less' | 'all';
 }
 
 export interface ViteUnpluginCssUnBundlePluginOtpnios {

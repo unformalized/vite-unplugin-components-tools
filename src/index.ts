@@ -60,6 +60,12 @@ const addCssImports = (chunk: Chunk, pluginOptions: ViteUnpluginCssUnBundlePlugi
     if (importBindings && importBindings.length) {
       const styleImportBlock = importBindings
         .map((item) => {
+          const resolveOptions = pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios];
+          const nextOptions =
+            typeof resolveOptions === 'boolean'
+              ? resolveOptions
+              : { ...resolveOptions, importStyle: resolveOptions.generateBundleImportStyle };
+          pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios] = nextOptions;
           const styleImport = getComponentStyleDir({ libName, importName: item, pluginOptions });
           if (!styleImport) return '';
           const importList = Array.isArray(styleImport) ? styleImport : [styleImport];
@@ -90,7 +96,6 @@ const removeCssImports = (code: string, options: ViteUnpluginCssUnBundlePluginOt
       const source = node.source.value;
       const isLibCssFile = isComponentStyleDir(source, options);
       needRegenerate = needRegenerate || isLibCssFile;
-      // style 文件
       return !isLibCssFile;
     }
     return true;
@@ -144,7 +149,7 @@ export const viteUnpluginCssUnBundlePluginV2 = (options: ViteUnpluginCssUnBundle
     enforce: 'pre',
     apply: 'build',
     resolveId(source, importer, options) {
-      const isUnbundleCss = paths.some((item) => source.endsWith(item));
+      const isUnbundleCss = paths.some((item) => source === item);
       if (isUnbundleCss) {
         return { id: source, external: true };
       }
