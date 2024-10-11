@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/vite-env.d.ts","./src/components/button/index.vue","./config/unplugin/auto-imports.d.ts","./config/unplugin/components.d.ts"],"version":"5.6.3"}

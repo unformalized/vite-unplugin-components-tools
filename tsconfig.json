@@ -28,5 +28,13 @@
     "emitDeclarationOnly": true,
     "declarationDir": "dist",
     "rootDir": "."
-  }
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.vue"
+  ],
+  "exclude": [
+    "./example/**/*.*"
+  ]
 }

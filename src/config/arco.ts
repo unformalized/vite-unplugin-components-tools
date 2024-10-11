@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash-es';
+import type { ArcoResolverOptions } from '../interface';
 
 export const ARCO_PACKAGE_NAME = '@arco-design/web-vue';
 export const ArcoMatchComponents = [
@@ -122,11 +123,23 @@ export const ArcoMatchComponents = [
   },
 ];
 
-export function getArcoComponentStyleDir(importName: string): string;
-export function getArcoComponentStyleDir(): string[];
-export function getArcoComponentStyleDir(importName?: string): string | string[] {
+const _getArcoComponentStyleDir = (componentName: string, options: ArcoResolverOptions | true) => {
+  const importStyle = typeof options === 'boolean' ? 'css' : options.importStyle ?? 'css';
+  if (importStyle === 'less') return `@arco-design/web-vue/es/${componentName}/style/index.js`;
+  return `@arco-design/web-vue/es/${componentName}/style/css.js`;
+};
+
+/**
+ * 获取 arco 组件样式路径
+ * @param _options importName 源代码中引入的组件名称
+ */
+export function getArcoComponentStyleDir(_options: {
+  importName?: string;
+  options: ArcoResolverOptions | true;
+}): undefined | string | string[] {
+  const { importName, options } = _options || {};
   if (!importName) {
-    return ArcoMatchComponents.map(({ componentDir }) => `@arco-design/web-vue/es/${componentDir}/style/index.js`);
+    return ArcoMatchComponents.map(({ componentDir }) => _getArcoComponentStyleDir(componentDir, options));
   }
 
   if (['ConfigProvider', 'Icon'].includes(importName)) return undefined;
@@ -138,13 +151,12 @@ export function getArcoComponentStyleDir(importName?: string): string | string[]
       break;
     }
   }
-  return `@arco-design/web-vue/es/${componentDir}/style/index.js`;
+
+  return _getArcoComponentStyleDir(componentDir, options);
 }
 
-export const isArcoComponentStyleDir = (importSource: string) => {
+export const isArcoComponentStyleDir = (importSource: string, options: ArcoResolverOptions | true) => {
   const arcoComponentDirs = ArcoMatchComponents.map((item) => item.componentDir);
 
-  return arcoComponentDirs.some((componentDir) => {
-    return `@arco-design/web-vue/es/${componentDir}/style/index.js` === importSource;
-  });
+  return arcoComponentDirs.some((componentDir) => _getArcoComponentStyleDir(componentDir, options) === importSource);
 };

@@ -4,3 +4,4 @@ config
 docs
 node_modules
 src
+!dist/src
