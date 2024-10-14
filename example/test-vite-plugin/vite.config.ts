@@ -4,7 +4,7 @@ import packageJson from './package.json';
 import Components from 'unplugin-vue-components/vite';
 import { ArcoResolver } from 'unplugin-vue-components/resolvers';
 import AutoImport from 'unplugin-auto-import/vite';
-import { viteUnpluginCssUnBundlePluginV2 } from 'vite-unplugin-components-tools';
+import { viteUnpluginUnBundlePlugin } from 'vite-unplugin-components-tools';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -33,7 +33,9 @@ export default defineConfig({
       ],
       dts: './config/unplugin/auto-imports.d.ts',
     }),
-    viteUnpluginCssUnBundlePluginV2({ '@arco-design/web-vue': 'all', generateBundleImportStyle: 'less' }),
+    viteUnpluginUnBundlePlugin({
+      '@arco-design/web-vue': { importStyle: 'all', resolveIcons: true },
+    }),
   ],
   build: {
     target: 'modules',

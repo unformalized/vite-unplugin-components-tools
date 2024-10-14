@@ -239,3 +239,10 @@ export const isArcoComponentStyleDir = (importSource: string, options: ArcoResol
     [_getArcoComponentStyleDir(componentDir, options)].flatMap((item) => item).includes(importSource),
   );
 };
+
+export const getArcoIconDir = (options: ArcoResolverOptions | true): null | string => {
+  if (options === true) return null;
+  const enableResolveIcons =
+    typeof options?.resolveIcons === 'boolean' ? options?.resolveIcons : options?.resolveIcons?.enable;
+  return enableResolveIcons ? `@arco-design/web-vue/es/icon` : null;
+};

@@ -2,8 +2,8 @@ import type { Plugin } from 'vite';
 import { parse } from '@babel/parser';
 // @ts-ignore
 import generator from '@babel/generator';
-import { intersection } from 'lodash-es';
-import { getComponentStyleDir } from './config';
+import { compact, intersection } from 'lodash-es';
+import { getComponentStyleDir, getIconsDir } from './config';
 import { isComponentStyleDir } from './config';
 import type { ViteUnpluginCssUnBundlePluginOtpnios } from './interface';
 
@@ -135,14 +135,16 @@ export const viteUnpluginCssUnBundlePlugin = (options: ViteUnpluginCssUnBundlePl
 
 /**
  * 使用在 resolveId 时忽略 css 样式的处理
+ * 增加 icon 处理，arco option 中设置 resolveIcons
  * @param options
  */
-export const viteUnpluginCssUnBundlePluginV2 = (options: ViteUnpluginCssUnBundlePluginOtpnios): Plugin => {
+export const viteUnpluginUnBundlePlugin = (options: ViteUnpluginCssUnBundlePluginOtpnios): Plugin => {
   const libNames: string[] = Object.keys(options);
   const paths = libNames.flatMap((item) => {
     const paths = getComponentStyleDir({ libName: item, pluginOptions: options });
     return Array.isArray(paths) ? paths : [paths];
   });
+  const iconsPaths = compact(libNames.map((item) => getIconsDir({ libName: item, pluginOptions: options })));
 
   return {
     name: 'vite-arco-css-unbundle-v2',
@@ -151,6 +153,9 @@ export const viteUnpluginCssUnBundlePluginV2 = (options: ViteUnpluginCssUnBundle
     resolveId(source, importer, options) {
       const isUnbundleCss = paths.some((item) => source === item);
       if (isUnbundleCss) {
+        return { id: source, external: true };
+      }
+      if (iconsPaths.length && iconsPaths.some((item) => item === source)) {
         return { id: source, external: true };
       }
       return null;

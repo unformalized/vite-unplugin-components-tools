@@ -1,5 +1,5 @@
 import type { ViteUnpluginCssUnBundlePluginOtpnios } from '../interface';
-import { ARCO_PACKAGE_NAME, getArcoComponentStyleDir, isArcoComponentStyleDir } from './arco';
+import { ARCO_PACKAGE_NAME, getArcoComponentStyleDir, isArcoComponentStyleDir, getArcoIconDir } from './arco';
 
 export function getComponentStyleDir(options: {
   libName: string;
@@ -25,4 +25,14 @@ export const isComponentStyleDir = (source: string, options: ViteUnpluginCssUnBu
         return false;
     }
   });
+};
+
+export const getIconsDir = (options: {
+  libName: string;
+  pluginOptions: ViteUnpluginCssUnBundlePluginOtpnios;
+  importName?: string;
+}) => {
+  const { libName, pluginOptions } = options;
+  if (libName === ARCO_PACKAGE_NAME) return getArcoIconDir(pluginOptions['@arco-design/web-vue']);
+  return undefined;
 };

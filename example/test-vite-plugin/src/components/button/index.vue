@@ -16,6 +16,7 @@ const handleClick = () => {
 
 <template>
   <a-button px-5 @click="handleClick">
+    <icon-plus />
     {{ props.text }}
   </a-button>
 </template>
