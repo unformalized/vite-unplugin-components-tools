@@ -58,6 +58,7 @@ const addCssImports = (chunk: Chunk, pluginOptions: ViteUnpluginCssUnBundlePlugi
   Object.keys(pluginOptions).forEach((libName) => {
     const importBindings = chunk.importedBindings[libName];
     if (importBindings && importBindings.length) {
+      const importedList: string[] = [];
       const styleImportBlock = importBindings
         .map((item) => {
           const resolveOptions = pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios];
@@ -68,7 +69,10 @@ const addCssImports = (chunk: Chunk, pluginOptions: ViteUnpluginCssUnBundlePlugi
           pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios] = nextOptions;
           const styleImport = getComponentStyleDir({ libName, importName: item, pluginOptions });
           if (!styleImport) return '';
-          const importList = Array.isArray(styleImport) ? styleImport : [styleImport];
+          const importList = (Array.isArray(styleImport) ? styleImport : [styleImport]).filter(
+            (item) => !importedList.includes(item),
+          );
+          importedList.push(...importList);
           importList.forEach((styleImport) => {
             chunk.imports.push(styleImport);
             chunk.importedBindings[styleImport] = [];

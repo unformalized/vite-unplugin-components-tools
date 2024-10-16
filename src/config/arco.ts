@@ -60,7 +60,7 @@ export const ArcoMatchComponents = [
     componentDir: 'grid',
   },
   {
-    pattern: /^(ImagePreview|ImagePreviewGroup)$/,
+    pattern: /^(ImagePreview|ImagePreviewGroup|ImagePreviewAction)$/,
     componentDir: 'image',
   },
   {
