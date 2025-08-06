@@ -1,6 +1,6 @@
 {
   "name": "vite-unplugin-components-tools",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "arco-design UI components vue version awesome tools",
   "main": "./dist/index.js",
   "types": "./dist/src/index.d.ts",
