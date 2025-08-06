@@ -198,6 +198,9 @@ export const ArcoComponents = [
   'watermark',
 ];
 
+export const ARCO_STYLE_IMPORT_REGEX =
+  /import\s+["']@arco-design\/web-vue\/es\/([\w-]+)\/style\/(index\.js|css.js)["'];?\s*/g;
+
 const _getArcoComponentStyleDir = (componentName: string, options: ArcoResolverOptions | true): string | string[] => {
   const importStyle = typeof options === 'boolean' ? 'css' : options.importStyle ?? 'css';
   if (importStyle === 'less') return `@arco-design/web-vue/es/${componentName}/style/index.js`;

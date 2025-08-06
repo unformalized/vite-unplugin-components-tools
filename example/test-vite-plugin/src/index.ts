@@ -1,1 +1,1 @@
-export { default as TestButton } from './components/button/index.vue';
+export { default as TestButton } from './button/index.vue';

@@ -37,3 +37,7 @@ export interface ArcoResolverOptions {
 export interface ViteUnpluginCssUnBundlePluginOtpnios {
   '@arco-design/web-vue'?: ArcoResolverOptions | true;
 }
+
+export interface ViteSplitImportStyleOptions {
+  styleLibNames: ['@arco-design/web-vue'];
+}
