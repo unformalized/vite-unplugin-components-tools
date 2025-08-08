@@ -199,7 +199,7 @@ export const ArcoComponents = [
 ];
 
 export const ARCO_STYLE_IMPORT_REGEX =
-  /import\s+["']@arco-design\/web-vue\/es\/([\w-]+)\/style\/(index\.js|css.js)["'];?\s*/g;
+  /import\s+(["'])@arco-design\/web-vue\/es\/([\w-]+)\/style\/(index\.js|css\.js)\1\s*;?\s*/g;
 
 const _getArcoComponentStyleDir = (componentName: string, options: ArcoResolverOptions | true): string | string[] => {
   const importStyle = typeof options === 'boolean' ? 'css' : options.importStyle ?? 'css';
