@@ -4,12 +4,6 @@ export type ResolveIconsOption = DisallowResolveIconOption | AllowResolveIconOpt
 
 export interface ArcoResolverOptions {
   /**
-   * exclude components that do not require automatic import
-   *
-   * @default []
-   */
-  exclude?: string | RegExp | (string | RegExp)[];
-  /**
    * import style css or less with components
    *
    * @default 'css'
@@ -35,8 +29,19 @@ export interface ArcoResolverOptions {
 }
 
 export interface ViteUnpluginCssUnBundlePluginOtpnios {
+  /**
+   * 是否先执行移除 css 操作
+   * @default true
+   */
+  removeCss?: boolean;
+  /**
+   * 使用 v1 版本，可以过滤文件不进行样式添加
+   */
+  exclude?: RegExp | RegExp[];
   '@arco-design/web-vue'?: ArcoResolverOptions | true;
 }
+
+export type LibOptions = Omit<ViteUnpluginCssUnBundlePluginOtpnios, 'removeCss' | 'exclude'>;
 
 export interface ViteSplitImportStyleOptions {
   styleLibNames: ['@arco-design/web-vue'];

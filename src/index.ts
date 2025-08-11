@@ -1,11 +1,11 @@
-import type { Plugin, UserConfig } from 'vite';
+import type { Plugin } from 'vite';
 import { parse } from '@babel/parser';
 // @ts-ignore
 import generator from '@babel/generator';
 import { compact, intersection } from 'lodash-es';
 import { getComponentStyleDir, getIconsDir, styleImportRegMap } from './config';
 import { isComponentStyleDir } from './config';
-import type { ViteSplitImportStyleOptions, ViteUnpluginCssUnBundlePluginOtpnios } from './interface';
+import type { LibOptions, ViteSplitImportStyleOptions, ViteUnpluginCssUnBundlePluginOtpnios } from './interface';
 
 type Chunk = Extract<
   Parameters<Extract<Plugin['generateBundle'], (...args: any[]) => any>>[1][string],
@@ -54,19 +54,19 @@ const removePeerDepNoBindingsImport = (peerDeps: string[], chunk: Chunk): string
 /**
  * 添加 css 引入
  */
-const addCssImports = (chunk: Chunk, pluginOptions: ViteUnpluginCssUnBundlePluginOtpnios) => {
+const addCssImports = (chunk: Chunk, pluginOptions: LibOptions) => {
   Object.keys(pluginOptions).forEach((libName) => {
     const importBindings = chunk.importedBindings[libName];
     if (importBindings && importBindings.length) {
       const importedList: string[] = [];
       const styleImportBlock = importBindings
         .map((item) => {
-          const resolveOptions = pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios];
+          const resolveOptions = pluginOptions[libName as keyof LibOptions];
           const nextOptions =
             typeof resolveOptions === 'boolean'
               ? resolveOptions
               : { ...resolveOptions, importStyle: resolveOptions.generateBundleImportStyle };
-          pluginOptions[libName as keyof ViteUnpluginCssUnBundlePluginOtpnios] = nextOptions;
+          pluginOptions[libName as keyof LibOptions] = nextOptions;
           const styleImport = getComponentStyleDir({ libName, importName: item, pluginOptions });
           if (!styleImport) return '';
           const importList = (Array.isArray(styleImport) ? styleImport : [styleImport]).filter(
@@ -87,7 +87,7 @@ const addCssImports = (chunk: Chunk, pluginOptions: ViteUnpluginCssUnBundlePlugi
   });
 };
 
-const removeCssImports = (code: string, options: ViteUnpluginCssUnBundlePluginOtpnios): string | null => {
+const removeCssImports = (code: string, options: LibOptions): string | null => {
   if (!Object.keys(options)) return null;
   const parserResult = parse(code, { sourceType: 'module' });
   if (parserResult.errors.length > 0) {
@@ -119,18 +119,26 @@ const removeCssImports = (code: string, options: ViteUnpluginCssUnBundlePluginOt
  * 所以该插件会将 arco 的 css 代码，
  */
 export const viteUnpluginCssUnBundlePlugin = (options: ViteUnpluginCssUnBundlePluginOtpnios): Plugin => {
+  const { removeCss, exclude, ...libOptions } = options;
   return {
     name: 'vite-arco-css-unbundle',
     enforce: 'post',
     apply: 'build',
     transform(code, id) {
-      return removeCssImports(code, options);
+      if (!removeCss) return;
+      return removeCssImports(code, libOptions);
     },
     generateBundle(outputOptions, bundle, isWrite) {
       Object.keys(bundle).forEach((key) => {
         const item = bundle[key];
         if (item.type === 'chunk') {
-          addCssImports(item, options);
+          const isExclude = exclude
+            ? (Array.isArray(exclude) ? exclude : [exclude]).some((reg) => reg.test(item.fileName))
+            : false;
+          if (isExclude) {
+            return;
+          }
+          addCssImports(item, libOptions);
         }
       });
     },
@@ -142,7 +150,7 @@ export const viteUnpluginCssUnBundlePlugin = (options: ViteUnpluginCssUnBundlePl
  * 增加 icon 处理，arco option 中设置 resolveIcons
  * @param options
  */
-export const viteUnpluginUnBundlePlugin = (options: ViteUnpluginCssUnBundlePluginOtpnios): Plugin => {
+export const viteUnpluginUnBundlePlugin = (options: LibOptions): Plugin => {
   const libNames: string[] = Object.keys(options);
   const paths = libNames.flatMap((item) => {
     const paths = getComponentStyleDir({ libName: item, pluginOptions: options });
